@@ -5,6 +5,7 @@ import ImageContainer from "./ImageContainer";
 import Loader from "./Loader";
 import SearchIcon from "../assets/icons/search.svg";
 
+// NOTE: Image url formatted based on https://www.flickr.com/services/api/misc.urls.html
 const formatImageData = (data) => ({
   url: `https://live.staticflickr.com/${data.server}/${data.id}_${data.secret}_n.jpg`,
   title: data.title,
@@ -22,17 +23,18 @@ export default function ImageList() {
   const [imagesError, setImagesError] = useState("");
   const loader = useRef(null);
 
+  // Handles the infinite scroll functionality using IntersectionObserver
   const handleObserver = useCallback((entries) => {
     const target = entries[0];
     if (target.isIntersecting) {
-      console.log("123");
       loadMoreImages();
-      // setPage((prev) => prev + 1);
     }
   }, []);
 
+  // Makes the initial http request for the image data
   useEffect(() => {
     const fetchData = async () => {
+      console.log("loading init")
       try {
         const imgs = await flickr.getImages({ tags: search, perPage: PER_PAGE, page });
         const parsedImgData = imgs.data.photos.photo.map((img) => formatImageData(img));
@@ -47,14 +49,18 @@ export default function ImageList() {
     fetchData();
   }, []);
 
+  // Handles the infinite scroll
   useEffect(() => {
     const option = { root: null, rootMargin: "20px", threshold: 0 };
     const observer = new IntersectionObserver(handleObserver, option);
     if (loader.current) observer.observe(loader.current);
   }, [handleObserver]);
 
+  // Refreshes the data based on the query term
   const searchImages = async () => {
+    console.log("loading search")
     setLoading(true);
+    setImages([]);
     setPage(1);
     try {
       const imgs = await flickr.getImages({ tags: search, perPage: PER_PAGE, page });
@@ -68,27 +74,37 @@ export default function ImageList() {
     }
   };
 
+  // Allows the user to complete the search by pressing enter
   const handleEnterKeyPress = (event) => {
     if (event.key === "Enter") {
       searchImages();
     }
   };
 
-  const loadMoreImages = async () => {
-    setPage(page + 1);
+  // Loads more images once the user scrolled to the bottom page
+  const loadMoreImages = async (newSearch, newPage) => {
+    console.log("loading more")
+    setPage((prev) => prev + 1);
     setLoadingMore(true);
-    try {
-      const imgs = await flickr.getImages({ tags: search, perPage: PER_PAGE, page });
-      const parsedImgData = imgs.data.photos.photo.map((img) => formatImageData(img));
-      setImages((prev) => [...prev, ...parsedImgData]);
-    } catch (error) {
-      console.log(error);
-      setImagesError("Something went wrong while trying to fetch the images!");
-    } finally {
-      setLoadingMore(false);
-    }
   };
 
+  useEffect(() => {
+    const haha = async () => {
+      try {
+        const imgs = await flickr.getImages({ tags: search, perPage: PER_PAGE, page });
+        const parsedImgData = imgs.data.photos.photo.map((img) => formatImageData(img));
+        setImages((prev) => [...prev, ...parsedImgData]);
+      } catch (error) {
+        console.log(error);
+        setImagesError("Something went wrong while trying to fetch the images!");
+      } finally {
+        setLoadingMore(false);
+      }
+    };
+    haha();
+  }, [page]);
+
+  // Generates the image list bases the the data returned by the api
   const genImages = (imgs) => {
     const items = imgs.map((img, i) => <ImageContainer key={i} data={img} />);
     return (
@@ -101,7 +117,7 @@ export default function ImageList() {
   return (
     <div className="image-list-container">
       <div className="search">
-        <input type="text" onKeyDown={handleEnterKeyPress} value={search} onChange={e => setSearch(e.target.value)} placeholder="Search images by tags..." />
+        <input id="search" type="text" onKeyDown={handleEnterKeyPress} value={search} onChange={e => setSearch(e.target.value)} placeholder="Search images by tags..." />
         <button onClick={searchImages}><img alt="search icon" src={SearchIcon} /></button>
       </div>
       {loading && <div className="info">

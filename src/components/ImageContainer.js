@@ -6,6 +6,7 @@ export default function ImageContainer(props) {
     <div className="image">
       <img alt={props.data.title} src={props.data.url} />
       <div className="content">
+        {/* NOTE: Making sure that the title and description aren't too long */}
         <h2>{props.data.title.slice(0, 42)}{props.data.title.length > 42 && " ..."}</h2>
         <p>{props.data.description.slice(0, 256)}{props.data.description.length > 256 && " ..."}</p>
         {/* <p>{props.data.description}</p> */}
