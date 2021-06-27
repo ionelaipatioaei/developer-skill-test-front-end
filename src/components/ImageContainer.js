@@ -1,5 +1,5 @@
 import "../styles/Image.scss";
-import ArrowRight from "../assets/icons/arrow-right.svg"
+import ArrowRightIcon from "../assets/icons/arrow-right.svg"
 
 export default function ImageContainer(props) {
   return (
@@ -10,7 +10,7 @@ export default function ImageContainer(props) {
         <p>{props.data.description}</p>
         <a href="/#">
           Explore
-          <img className="right-arrow-icon" src={ArrowRight} alt="right arrow icon" />
+          <img className="right-arrow-icon" src={ArrowRightIcon} alt="right arrow icon" />
         </a>
       </div>
     </div>
