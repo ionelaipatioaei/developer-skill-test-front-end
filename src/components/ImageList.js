@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import * as flickr from "../services/flickr";
 import "../styles/Image.scss";
 import ImageContainer from "./ImageContainer";
@@ -20,6 +20,16 @@ export default function ImageList() {
   const [page, setPage] = useState(1);
   const [images, setImages] = useState([]);
   const [imagesError, setImagesError] = useState("");
+  const loader = useRef(null);
+
+  const handleObserver = useCallback((entries) => {
+    const target = entries[0];
+    if (target.isIntersecting) {
+      console.log("123");
+      loadMoreImages();
+      // setPage((prev) => prev + 1);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,6 +46,12 @@ export default function ImageList() {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const option = { root: null, rootMargin: "20px", threshold: 0 };
+    const observer = new IntersectionObserver(handleObserver, option);
+    if (loader.current) observer.observe(loader.current);
+  }, [handleObserver]);
 
   const searchImages = async () => {
     setLoading(true);
@@ -64,7 +80,7 @@ export default function ImageList() {
     try {
       const imgs = await flickr.getImages({ tags: search, perPage: PER_PAGE, page });
       const parsedImgData = imgs.data.photos.photo.map((img) => formatImageData(img));
-      setImages(images.concat(parsedImgData));
+      setImages((prev) => [...prev, ...parsedImgData]);
     } catch (error) {
       console.log(error);
       setImagesError("Something went wrong while trying to fetch the images!");
@@ -93,9 +109,11 @@ export default function ImageList() {
         <p>Loading images, please wait...</p>
       </div>}
       {!loading && imagesError === "" && genImages(images)}
-      {!loading && imagesError !== "" && <p>{imagesError}</p>}
+      <div ref={loader} />
+      {!loading && imagesError !== "" && <div className="info">
+        <p>{imagesError}</p>
+      </div>}
       {loadingMore && <p>Loading more images...</p>}
-      <button className="load-button" onClick={loadMoreImages}>Load more</button>
     </div>
   );
 }
