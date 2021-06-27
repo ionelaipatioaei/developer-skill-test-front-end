@@ -70,6 +70,8 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  // align-items: flex-start;
+  justify-content: center;
   background-color: $bg-color2;
   width: calc(100% - 48px);
   margin: 32px 24px;
@@ -95,6 +97,9 @@
     flex-direction: column;
     padding: 24px;
     flex-grow: 1;
+    h2 {
+      overflow: hidden;
+    }
     p {
       margin: 16px 0;
       flex-grow: 1;
@@ -154,5 +159,39 @@
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     box-shadow: 0 8px 12px rgba(82, 101, 134, 0.2);
+  }
+}
+
+// @media all and (max-width: 1920px) {
+//   .image {
+//     width: calc(20% - 48px);
+//   }
+// }
+@media all and (max-width: 1199px) {
+  .image {
+    width: calc(33.33% - 48px);
+  }
+}
+@media all and (max-width: 991px) {
+  .images {
+    padding: 24px;
+  }
+  .image {
+    width: calc(50% - 48px);
+    margin: 16px;
+  }
+}
+@media all and (max-width: 768px) {
+  .images {
+    margin: 32px 16px;
+    padding: 16px;
+  }
+  .image {
+    margin: 8px;
+  }
+}
+@media all and (max-width: 575px) {
+  .image {
+    width: calc(100% - 24px);
   }
 }
