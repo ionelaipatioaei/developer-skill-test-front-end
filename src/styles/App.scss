@@ -1,5 +1,18 @@
 @import "./variables.scss";
 
+@keyframes rotate{
+  from { transform: rotate(-360deg); }
+  to { transform: rotate(0deg); }
+}
+
+.loader {
+  animation: rotate 3s linear infinite;
+  img {
+    height: 72px;
+    width: 72px;
+  }
+}
+
 .header {
   background-color: $navbar-color;
   // Measured the height from the provided image

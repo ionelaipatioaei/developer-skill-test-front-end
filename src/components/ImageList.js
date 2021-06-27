@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import * as flickr from "../services/flickr";
 import "../styles/Image.scss";
 import ImageContainer from "./ImageContainer";
+import Loader from "./Loader";
 import SearchIcon from "../assets/icons/search.svg";
 
 const formatImageData = (data) => ({
@@ -69,7 +70,10 @@ export default function ImageList() {
         <input type="text" onKeyDown={handleEnterKeyPress} value={search} onChange={e => setSearch(e.target.value)} placeholder="Search images by tags..." />
         <button onClick={searchImages}><img alt="search icon" src={SearchIcon} /></button>
       </div>
-      {loading && <p>Images are loading</p>}
+      {loading && <div className="info">
+        <Loader />
+        <p>Loading images, please wait...</p>
+      </div>}
       {!loading && imagesError === "" && genImages(images)}
       {!loading && imagesError !== "" && <p>{imagesError}</p>}
     </div>
