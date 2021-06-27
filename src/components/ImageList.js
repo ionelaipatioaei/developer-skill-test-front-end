@@ -89,7 +89,7 @@ export default function ImageList() {
   };
 
   useEffect(() => {
-    const haha = async () => {
+    const addImages = async () => {
       try {
         const imgs = await flickr.getImages({ tags: search, perPage: PER_PAGE, page });
         const parsedImgData = imgs.data.photos.photo.map((img) => formatImageData(img));
@@ -101,7 +101,7 @@ export default function ImageList() {
         setLoadingMore(false);
       }
     };
-    haha();
+    addImages();
   }, [page]);
 
   // Generates the image list bases the the data returned by the api
